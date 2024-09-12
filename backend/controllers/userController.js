@@ -68,13 +68,20 @@ exports.login = async (req, res) => {
     // Compare the provided password with the hashed password in the database
     const check = await bcrypt.compare(password, user.password);
     if (!check) {
-      return res.status(401).json({ message: "Inavalid Password" });
+      return res.status(401).json({ message: "Invalid Password" });
     }
 
     const token = await generatejwt(user._id);
 
-    res.status(200).json({ status: "success", token });
-    // res.status(200).json({message:"Successfull"});
+    // Set the token as a cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      sameSite: 'strict', // Prevent CSRF attacks
+      maxAge: 2 * 60 * 60 * 1000 // Cookie expires in 2 hours
+    });
+
+    res.status(200).json({ status: "success", message: "Login successful" });
   } catch (error) {
     console.error("Error Login User: ", error);
     res.status(500).json({ message: "Login failed" });

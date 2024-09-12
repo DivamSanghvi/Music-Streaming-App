@@ -2,7 +2,7 @@
 const express = require('express'); // Import Express.js for routing
 const router = express.Router(); // Create an instance of an Express router
 const userController = require('../controllers/userController'); // Import the userController module
-const { verifyjwt, logout, verifyToken } = require("../middleware"); // Import the verifyjwt middleware for authentication
+const { verifyjwt, logout, verifyToken } = require("../middleware.js"); // Import the verifyjwt middleware for authentication
 
 // Define routes for user-related actions, including registration and login
 // These routes do not require authentication
