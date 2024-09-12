@@ -1,7 +1,7 @@
 // Import necessary modules and packages
 const express = require('express'); // Import Express.js for routing
 const router = express.Router(); // Create an instance of an Express router
-const playlistController = require('../controllers/playlistController'); // Import the playlistController module
+const playlistController = require('../controllers/playlistController.js'); // Import the playlistController module
 const { verifyjwt } = require("../middleware"); // Import the verifyjwt middleware for authentication
 
 // Apply the verifyjwt middleware to all routes defined in this router

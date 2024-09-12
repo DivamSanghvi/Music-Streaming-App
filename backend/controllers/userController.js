@@ -7,7 +7,18 @@ const { generatejwt } = require("../middleware");
 // Register a new user
 exports.register = async (req, res) => {
   try {
+    console.log("Received registration request:", req.body);
+    
     const { username, email, password } = req.body;
+    
+    // Check if all required fields are present
+    if (!username || !email || !password) {
+      console.log("Missing required fields:", { username, email, password });
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    
+    console.log("Registering user:", { username, email });
+    
     const saltRounds = 10;
 
     // Check if a user with the provided email already exists
@@ -32,12 +43,14 @@ exports.register = async (req, res) => {
     // Save the new user to the database
     await newUser.save();
 
+    console.log("User registered successfully:", newUser);
+
     res
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
   } catch (error) {
     console.error("Error registering user: ", error);
-    res.status(500).json({ message: "Registration failed" });
+    res.status(500).json({ message: "Registration failed", error: error.message });
   }
 };
 

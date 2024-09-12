@@ -1,3 +1,4 @@
+
 // Import the mongoose package for defining MongoDB schemas and models
 const mongoose = require('mongoose');
 

@@ -1,58 +1,46 @@
-// Import necessary packages and modules
-const express = require("express"); // Express.js for building the web application
-const cors = require('cors'); // Middleware for handling Cross-Origin Resource Sharing (CORS)
-const mongoose = require('mongoose'); // MongoDB ORM for database interaction
-
+const express = require("express");
+const cors = require('cors');
+const mongoose = require('mongoose');
 const userRoutes = require('./routes/userRoutes');
 const songRoutes = require('./routes/songRoutes');
 const playlistRoutes = require('./routes/playlistRoutes');
+require('dotenv').config();
 
-const port = process.env.PORT || 5000; // Port on which the server will run
-require('dotenv').config(); // Load environment variables from a .env file
-const app = express(); // Create an instance of the Express application
+const port = process.env.PORT || 8000;
+const app = express();
 
-
-
-// Enable CORS to allow cross-origin requests
+// Configure CORS
 app.use(cors({
-    origin: true, // included origin as true
-    credentials: true,//included credentials as true
+    origin: process.env.CORS_ORIGIN || '*', // Set allowed origin(s) here
+    credentials: true
 }));
 
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
-try {
-    // Connect to MongoDB using the URL provided in the .env file
-    mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-
-    // Event handlers for MongoDB connection
-    mongoose.connection.on('connected', () => {
-        console.log('Connected to MongoDB');
-    });
-
-    mongoose.connection.on('error', (err) => {
-        console.error('MongoDB connection error:', err);
-    });
-} catch (err) {
-    // Handle any errors that occur during MongoDB connection
-    console.error('An error occurred while connecting to MongoDB:', err);
-}
-
-// Import routes for different parts of the application
-
-
-// Use routes and apply CORS middleware to specific routes
+// Middleware setup
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// Route setup
 app.use('/users', userRoutes);
 app.use('/songs', songRoutes);
 app.use('/playlists', playlistRoutes);
 
-// Define a default route that responds with a welcome message
+// Default route
 app.use('/', (req, res) => {
     res.send("Welcome to our music app");
-})
+});
 
-// Start the server and listen on the specified port
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
+// Start server
 app.listen(port, () => {
-    console.log(`Server is running on the port ${port}`)
+    console.log(`Server is running on port ${port}`);
 });
