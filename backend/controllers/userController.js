@@ -76,9 +76,9 @@ exports.login = async (req, res) => {
     // Set the token as a cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      sameSite: 'strict', // Prevent CSRF attacks
-      maxAge: 2 * 60 * 60 * 1000 // Cookie expires in 2 hours
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'strict', 
+      maxAge: 2 * 60 * 60 * 1000 
     });
 
     res.status(200).json({ status: "success", message: "Login successful" });
